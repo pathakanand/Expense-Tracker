@@ -10,7 +10,7 @@ const ExpenseTracker = () => {
 
 
 	useEffect(() => {
-        fetch('https://localhost:8080/expenses',{
+        fetch('http://localhost:8080/expenses',{
 			method:'GET',
 			credentials:'include'
 		})
@@ -34,7 +34,7 @@ const ExpenseTracker = () => {
 
 		const newExpense = { description, amount: parsedAmount };
 
-        fetch('https://localhost:8080/expenses', {
+        fetch('http://localhost:8080/expenses', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

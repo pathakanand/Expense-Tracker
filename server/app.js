@@ -17,7 +17,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/expense-tracker').then(() => {
 app.use(express.json());
 app.use(cors({
     credentials:true,
-    origin:"https://localhost:3000"
+    origin:"http://localhost:3000"
 }));
 app.use(expenseRoutes);
 app.listen(8080,()=>{
