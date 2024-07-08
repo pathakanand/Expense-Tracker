@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,28 +40,41 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
+    <div class="login-page">
+    <div className="login-container">
+      <h2 className="login-title">Login</h2>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="login-field">
+          <label className="login-label" htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            className="login-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="login-field">
+          <label className="login-label" htmlFor="password" aria-placeholder='********'>Password:</label>
+          <input
+            type="password"
+            id="password"
+            className="login-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <h3 >
+          Don't have Account??<a href='http://localhost:3000/register'>SignUp</a>
+        </h3>
+        <div className="login-button-container">
+          <button type="submit" className="login-button">Login</button>
+        </div>
       </form>
-      {message && <p>{message}</p>}
+      {message && <p className="login-message">{message}</p>}
+    </div>
     </div>
   );
 };

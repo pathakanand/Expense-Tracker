@@ -22,7 +22,7 @@ router.get('/register', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password, age } = req.body;
+        const { username, email, password, ConfirmPassword,Mobile} = req.body;
 
 
         const existingUser = await User.findOne({ email });
@@ -36,7 +36,8 @@ router.post('/register', async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            age
+            ConfirmPassword,
+            Mobile
         });
 
         res.status(201).json({ message: 'Signup successful.', success: true });
@@ -60,9 +61,9 @@ router.post('/login', async (req, res) => {
             return res.status(403).json({ message: 'Invalid password.', success: false });
         }
 
-        const token = jwt.sign({ email: user.email }, 'secret12');
+        const token = jwt.sign({ userId: user._id }, 'secret12');
 
-        res.cookie('token', token, );
+        res.cookie('token', token, { httpOnly: true });
 
         res.status(200).json({ message: 'Login successful.', success: true });
     } catch (error) {
@@ -70,5 +71,11 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Internal server error.', success: false });
     }
 });
+
+router.post('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logout successful' });
+  });
+  
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const express=require('express');
 const mongoose=require('mongoose');
-
+const User=require('./User');
 const expressSchema=mongoose.Schema({
     description:{
         type:String,
@@ -9,6 +9,11 @@ const expressSchema=mongoose.Schema({
     amount:{
         type:Number,
         required:true
+    },
+    user: {
+       type: mongoose.Schema.Types.ObjectId, 
+       ref: 'User', 
+       required: true 
     }
 })
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ExpenseTracker = () => {
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
+  const navigate=useNavigate();
 
   useEffect(() => {
     fetch('http://localhost:8080/expenses', {
@@ -13,9 +15,13 @@ const ExpenseTracker = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setTransactions(data);
-        const totalBalance = data.reduce((acc, transaction) => acc + transaction.amount, 0);
-        setBalance(totalBalance);
+        if (Array.isArray(data)) {
+          setTransactions(data);
+          const totalBalance = data.reduce((acc, transaction) => acc + transaction.amount, 0);
+          setBalance(totalBalance);
+        } else {
+          console.error('Expected an array of transactions, received:', data);
+        }
       })
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
@@ -35,6 +41,7 @@ const ExpenseTracker = () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(newExpense),
     })
       .then((res) => res.json())
@@ -48,9 +55,25 @@ const ExpenseTracker = () => {
     setAmount('');
   };
 
+  const handleLogout=()=>{
+    fetch('http://localhost:8080/api/logout',{
+      method:'POST',
+      credentials:'include'
+    })
+      .then(response =>{
+        if(response.ok) {
+          navigate('/login');
+        }else{
+          throw new Error('Logout Failed');
+        }
+      })
+      .catch(error => console.log("Error during logout:",error));
+  };
+
   return (
     <div className="container">
       <h1>Expense Tracker</h1>
+      <button onClick={handleLogout}>Logout</button>
       <div className="balance">
         <h2>
           Balance: Rs
@@ -62,21 +85,17 @@ const ExpenseTracker = () => {
       <div className="transactions">
         <h2>Transactions</h2>
         <ul>
-          {
-            transactions.map((transaction, index) => (
-              <li key={index}>
-                {`${transaction.description}: Rs${transaction.amount.toFixed(2)}`}
-              </li>
-            ))
-          }
+          {transactions.map((transaction, index) => (
+            <li key={index}>
+              {`${transaction.description}: Rs${(transaction.amount || 0).toFixed(2)}`}
+            </li>
+          ))}
         </ul>
       </div>
       <div className="add-expense">
         <h2>Add Expense</h2>
         <form>
-          <label htmlFor="description">
-            Description:
-          </label>
+          <label htmlFor="description">Description:</label>
           <input
             type="text"
             id="description"
@@ -84,9 +103,7 @@ const ExpenseTracker = () => {
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-          <label htmlFor="amount">
-            Amount:
-          </label>
+          <label htmlFor="amount">Amount:</label>
           <input
             type="number"
             id="amount"

@@ -1,10 +1,19 @@
-const express=require('express');
-const router=express.Router();
-const Expense=require('../Model/Expense');
+const express = require('express');
+const router = express.Router();
+const Expense = require('../Model/Expense');
+
+
+router.get('/',(req,res)=>{
+    res.send("hi! this is server of expense-tracker");
+});
 
 router.get('/expenses', async (req, res) => {
     try {
-        const expenses = await Expense.find({});
+        if (!req.user) {
+            return res.status(401).json({ message: 'Not authenticated' });
+        }
+        const userId = req.user._id;
+        const expenses = await Expense.find({ user: userId });
         res.json(expenses);
     } catch (err) {
         console.error('Error fetching expenses:', err.message);
@@ -13,15 +22,22 @@ router.get('/expenses', async (req, res) => {
 });
 
 router.post('/expenses', async (req, res) => {
-    const { description, amount } = req.body;
-
-    const newExpense = new Expense({
-        description,
-        amount
-    });
-
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Not authenticated' });
+        }
+        const { description, amount } = req.body;
+        const userId = req.user._id;
+
+        const newExpense = new Expense({
+            description,
+            amount,
+            user: userId
+        });
+
         const savedExpense = await newExpense.save();
+        req.user.expenses.push(savedExpense._id);
+        await req.user.save();
         res.status(201).json(savedExpense);
     } catch (err) {
         console.error('Error saving expense:', err.message);
@@ -29,4 +45,4 @@ router.post('/expenses', async (req, res) => {
     }
 });
 
-module.exports=router;
+module.exports = router;

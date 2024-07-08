@@ -5,18 +5,28 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [age, setAge] = useState('');
+  const[ConfirmPassword,setConfirmPassword]=useState('');
+  const [Mobile, setMobile] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (password !== ConfirmPassword) {
+      setMessage('Passwords do not match');
+      return;}
+    if(Mobile.length!==10){
+      setMessage('Mobile no. must be of 10 digit');
+      return;
+    }
+
     const userData = {
       username,
       email,
       password,
-      age
+      ConfirmPassword,
+      Mobile
     };
 
     fetch('http://localhost:8080/api/register', {
@@ -32,7 +42,8 @@ const Register = () => {
         setUsername('');
         setEmail('');
         setPassword('');
-        setAge('');
+        setConfirmPassword('');
+        setMobile('');
         return response.json();
       } else {
         throw new Error('Registration failed!');
@@ -50,44 +61,60 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="username">Username:</label>
+    <div className="register-page">
+    <div className="register-container">
+      <h2 className="login-title">Register</h2>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <label className="login-label" htmlFor="username">Username:</label>
         <input
+         className="login-input"
           type="text"
           id="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
-        <label htmlFor="email">Email:</label>
+        <label className="login-label" htmlFor="email">Email:</label>
         <input
+         className="login-input"
           type="email"
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <label htmlFor="password">Password:</label>
+        <label className="login-label" htmlFor="password">Password:</label>
         <input
+         className="login-input"
           type="password"
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <label htmlFor="age">Age:</label>
+        <label className="login-label" htmlFor="ConfirmPassword">Confirm Password:</label>
         <input
-          type="number"
-          id="age"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
+         className="login-input"
+          type="Password"
+          id="ConfirmPassword"
+          value={ConfirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
-        <button type="submit">Register</button>
+        <label className="login-label" htmlFor="Mobile">Mobile Number:</label>
+        <input
+         className="login-input"
+          type="text"
+          id="Mobile"
+          value={Mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          required
+        />
+        <div className="login-button-container">
+        <button  className="login-button" type="submit">Register</button></div>
       </form>
       {message && <p>{message}</p>}
+    </div>
     </div>
   );
 };
