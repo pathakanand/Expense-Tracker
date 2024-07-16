@@ -22,7 +22,7 @@ router.get('/register', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password, ConfirmPassword,Mobile} = req.body;
+        const { username, email, password,Mobile} = req.body;
 
 
         const existingUser = await User.findOne({ email });
@@ -36,7 +36,6 @@ router.post('/register', async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            ConfirmPassword,
             Mobile
         });
 

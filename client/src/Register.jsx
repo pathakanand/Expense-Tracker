@@ -25,7 +25,6 @@ const Register = () => {
       username,
       email,
       password,
-      ConfirmPassword,
       Mobile
     };
 
@@ -52,7 +51,7 @@ const Register = () => {
     .then(data => {
       console.log('Registration successful:', data);
       setMessage('Registration successful!');
-      navigate('/login'); // Redirect to login page
+      navigate('/login'); 
     })
     .catch(error => {
       console.error('Error registering user:', error);

@@ -3,119 +3,97 @@ import { useNavigate } from 'react-router-dom';
 
 const ExpenseTracker = () => {
   const [balance, setBalance] = useState(0);
-  const [transactions, setTransactions] = useState([]);
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const navigate=useNavigate();
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8080/expenses', {
+    fetch('http://localhost:8080/total-income', {
       method: 'GET',
-      credentials: 'include'
+      credentials: 'include',
     })
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setTransactions(data);
-          const totalBalance = data.reduce((acc, transaction) => acc + transaction.amount, 0);
-          setBalance(totalBalance);
-        } else {
-          console.error('Expected an array of transactions, received:', data);
-        }
-      })
-      .catch((error) => console.error('Error fetching data:', error));
+      .then((data) => setTotalIncome(Number(data.total)))
+      .catch((error) => console.error('Error fetching total income:', error));
+
+    fetch('http://localhost:8080/total-expenses', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => setTotalExpenses(Number(data.total)))
+      .catch((error) => console.error('Error fetching total expenses:', error));
   }, []);
 
-  const addExpense = () => {
-    const parsedAmount = parseFloat(amount);
+  useEffect(() => {
+    setBalance(totalIncome - totalExpenses);
+  }, [totalIncome, totalExpenses]);
 
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      alert('Please enter a valid amount.');
-      return;
-    }
-
-    const newExpense = { description, amount: parsedAmount };
-
-    fetch('http://localhost:8080/expenses', {
+  const handleResetBalance = () => {
+    fetch('http://localhost:8080/reset-balance', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       credentials: 'include',
-      body: JSON.stringify(newExpense),
     })
       .then((res) => res.json())
-      .then((data) => {
-        setTransactions([...transactions, data]);
-        setBalance(balance + parsedAmount);
+      .then(() => {
+        setTotalIncome(0);
+        setTotalExpenses(0);
+        setBalance(0);
       })
-      .catch((error) => console.error('Error adding expense:', error));
-
-    setDescription('');
-    setAmount('');
+      .catch((error) => console.error('Error resetting balance:', error));
   };
 
-  const handleLogout=()=>{
-    fetch('http://localhost:8080/api/logout',{
-      method:'POST',
-      credentials:'include'
+  const handleLogout = () => {
+    fetch('http://localhost:8080/api/logout', {
+      method: 'POST',
+      credentials: 'include',
     })
-      .then(response =>{
-        if(response.ok) {
+      .then((res) => {
+        if (res.ok) {
           navigate('/login');
-        }else{
-          throw new Error('Logout Failed');
+        } else {
+          console.error('Logout failed');
         }
       })
-      .catch(error => console.log("Error during logout:",error));
+      .catch((error) => console.error('Error logging out:', error));
   };
 
   return (
     <div className="container">
+      <div className="logout-container">
+        <button className="button" onClick={handleLogout}>Logout</button>
+      </div>
       <h1>Expense Tracker</h1>
-      <button onClick={handleLogout}>Logout</button>
-      <div className="balance">
-        <h2>
-          Balance: Rs
-          <span id="balance">
-            {balance.toFixed(2)}
-          </span>
-        </h2>
-      </div>
-      <div className="transactions">
-        <h2>Transactions</h2>
-        <ul>
-          {transactions.map((transaction, index) => (
-            <li key={index}>
-              {`${transaction.description}: Rs${(transaction.amount || 0).toFixed(2)}`}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="add-expense">
-        <h2>Add Expense</h2>
-        <form>
-          <label htmlFor="description">Description:</label>
-          <input
-            type="text"
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-          <label htmlFor="amount">Amount:</label>
-          <input
-            type="number"
-            id="amount"
-            step="0.01"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            required
-          />
-          <button type="button" onClick={addExpense}>
-            Add Expense
-          </button>
-        </form>
+      <div className="expense-cards">
+        <div className="card">
+          <div className="card-body">
+            <h2 className="card-title">Current Balance</h2>
+            <p className="card-text">{balance.toFixed(2)}</p>
+            <div className="card-footer">
+              <button className="button" onClick={handleResetBalance}>Reset Balance</button>
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-body">
+            <h2 className="card-title">Total Income</h2>
+            <p className="card-text">{totalIncome.toFixed(2)}</p>
+            <div className="card-footer">
+              <button className="button" onClick={() => navigate('/add-income')}>Add Income</button>
+              <button className="button" onClick={() => navigate('/view-income')}>View Incomes</button>
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-body">
+            <h2 className="card-title">Total Expenses</h2>
+            <p className="card-text">{totalExpenses.toFixed(2)}</p>
+            <div className="card-footer">
+              <button className="button" onClick={() => navigate('/add-expense')}>Add Expense</button>
+              <button className="button" onClick={() => navigate('/view-expense')}>View Expenses</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -14,10 +14,6 @@ const userSchema=mongoose.Schema({
         type:String,
         required:true
     },
-    ConfirmPassword:{
-        type:String,
-        required:true
-    },
     Mobile:{
         type:String,
         match:/^[6-9]\d{9}$/,
@@ -26,8 +22,12 @@ const userSchema=mongoose.Schema({
     expenses:[{ 
        type: mongoose.Schema.Types.ObjectId,
        ref: 'Expense' 
+    }],
+    incomes: [{ 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Income'
     }]
-})
+});
 
 const User=mongoose.model('User',userSchema);
 

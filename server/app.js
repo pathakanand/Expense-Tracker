@@ -8,6 +8,7 @@ const Expense = require('./Model/Expense');
 const expenseRoutes = require('./routes/expenseRoutes');
 const authRoutes = require('./routes/authRoutes');
 const User = require('./Model/User');
+const Income=require('./Model/Income');
 const jwt = require('jsonwebtoken');
 
 mongoose.connect('mongodb://127.0.0.1:27017/expense-tracker')
