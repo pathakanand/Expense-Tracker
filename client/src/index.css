@@ -234,3 +234,98 @@ a {
 	background-color: #e5d1f74d;
 	justify-content: center;
 }
+
+/* ExpenseTracker.css */
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+  }
+  
+  .logout-container {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 20px;
+  }
+  
+  .button {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	cursor: pointer;
+	border-radius: 5px;
+  }
+  
+  .button:hover {
+	background-color: #0056b3;
+  }
+  
+  .expense-cards {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
+  }
+  
+  .card {
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 5px;
+	width: 30%;
+	padding: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body {
+	margin-bottom: 20px;
+  }
+  
+  .card-title {
+	font-size: 1.5em;
+	margin-bottom: 10px;
+  }
+  
+  .card-text {
+	font-size: 1.2em;
+	margin-bottom: 10px;
+  }
+  
+  .card-footer {
+	display: flex;
+	justify-content: space-between;
+  }
+  
+  .chart-container {
+	margin-top: 40px;
+	padding: 20px;
+	background-color: #fff;
+	border: 1px solid #dee2e6;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .objectives-container {
+	margin-top: 20px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+  }
+  
+  .objective-field {
+	margin-bottom: 10px;
+  }
+  
+  .objective-field label {
+	margin-right: 10px;
+  }
+  
+  .objective-field input {
+	width: 100px;
+  }
+  
+  .button {
+	margin-top: 10px;
+  }
+  
+  

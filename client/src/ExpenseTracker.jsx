@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ExpenseChart from './ExpenseChart'; // Import ExpenseChart component
+import './index.css';
 
 const ExpenseTracker = () => {
   const [balance, setBalance] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const [savingsObjective, setSavingsObjective] = useState(0);
+  const [expensesObjective, setExpensesObjective] = useState(0);
+  const [currentSavingsObjective, setCurrentSavingsObjective] = useState(0);
+  const [currentExpensesObjective, setCurrentExpensesObjective] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,6 +29,17 @@ const ExpenseTracker = () => {
       .then((res) => res.json())
       .then((data) => setTotalExpenses(Number(data.total)))
       .catch((error) => console.error('Error fetching total expenses:', error));
+
+    fetch('http://localhost:8080/get-objective', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCurrentSavingsObjective(data.savingsObjective);
+        setCurrentExpensesObjective(data.expensesObjective);
+      })
+      .catch((error) => console.error('Error fetching objectives:', error));
   }, []);
 
   useEffect(() => {
@@ -56,6 +73,26 @@ const ExpenseTracker = () => {
         }
       })
       .catch((error) => console.error('Error logging out:', error));
+  };
+
+  const handleSetObjectives = () => {
+    fetch('http://localhost:8080/set-objective', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ savingsObjective, expensesObjective }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCurrentSavingsObjective(savingsObjective);
+        setCurrentExpensesObjective(expensesObjective);
+        setSavingsObjective(0);
+        setExpensesObjective(0);
+        console.log('Objectives set:', data);
+      })
+      .catch((error) => console.error('Error setting objectives:', error));
   };
 
   return (
@@ -94,6 +131,31 @@ const ExpenseTracker = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="chart-container">
+        <ExpenseChart />
+      </div>
+      <div className="objectives-container">
+        <h2>Set Objectives</h2>
+        <div className="objective-field">
+          <label>Savings Objective:</label>
+          <input
+            type="number"
+            value={savingsObjective}
+            onChange={(e) => setSavingsObjective(Number(e.target.value))}
+          />
+          <span>Current: {currentSavingsObjective}</span>
+        </div>
+        <div className="objective-field">
+          <label>Expenses Objective:</label>
+          <input
+            type="number"
+            value={expensesObjective}
+            onChange={(e) => setExpensesObjective(Number(e.target.value))}
+          />
+          <span>Current: {currentExpensesObjective}</span>
+        </div>
+        <button className="button" onClick={handleSetObjectives}>Set Objectives</button>
       </div>
     </div>
   );
